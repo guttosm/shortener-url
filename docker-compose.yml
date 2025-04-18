@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: url-shortener-app
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo:6
+    container_name: url-shortener-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7
+    container_name: url-shortener-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  mongo-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./mongo-data
+      o: bind
+
+  redis-data:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./redis-data
+      o: bind

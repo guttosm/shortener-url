@@ -1,0 +1,40 @@
+definitions:
+  entity.URL:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      original:
+        type: string
+      shortID:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/shorten:
+    post:
+      consumes:
+      - application/json
+      description: Recebe uma URL longa e retorna uma versão encurtada.
+      parameters:
+      - description: URL para encurtar
+        in: body
+        name: url
+        required: true
+        schema:
+          $ref: '#/definitions/entity.URL'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Response with shorter URL
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Encurtar URL
+      tags:
+      - URLs
+swagger: "2.0"

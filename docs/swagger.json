@@ -1,0 +1,64 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/api/shorten": {
+            "post": {
+                "description": "Recebe uma URL longa e retorna uma versão encurtada.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "URLs"
+                ],
+                "summary": "Encurtar URL",
+                "parameters": [
+                    {
+                        "description": "URL para encurtar",
+                        "name": "url",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entity.URL"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response with shorter URL",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entity.URL": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "original": {
+                    "type": "string"
+                },
+                "shortID": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
