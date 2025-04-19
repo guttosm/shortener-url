@@ -7,9 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/guttosm/url-shortener/config"
 	"github.com/guttosm/url-shortener/internal/http"
+	"github.com/guttosm/url-shortener/internal/middleware"
 	"github.com/redis/go-redis/v9"
 )
-
 
 // InitializeApp initializes the application by setting up the database connections,
 // Redis client, URL module, and HTTP router.
@@ -36,6 +36,9 @@ func InitializeApp() (*gin.Engine, func(), error) {
 
 	handler := http.NewHandler(urlModule.Service)
 	router := http.NewRouter(handler)
+
+	// Register the error handler middleware
+	router.Use(middleware.ErrorHandler)
 
 	cleanup := func() {
 		_ = client.Disconnect(context.Background())
