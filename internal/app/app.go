@@ -37,7 +37,6 @@ func InitializeApp() (*gin.Engine, func(), error) {
 	handler := http.NewHandler(urlModule.Service)
 	router := http.NewRouter(handler)
 
-	// Register the error handler middleware
 	router.Use(middleware.ErrorHandler)
 
 	cleanup := func() {

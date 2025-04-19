@@ -20,7 +20,7 @@ var JWTSecret = []byte("your-secret-key") // Replace with a secure key
 func GenerateToken(userID string) (string, error) {
     claims := jwt.MapClaims{
         "user_id": userID,
-        "exp":     time.Now().Add(time.Hour * 24).Unix(), // Token expires in 24 hours
+        "exp":     time.Now().Add(time.Hour * 24).Unix(),
     }
 
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

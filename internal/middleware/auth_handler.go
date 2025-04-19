@@ -1,4 +1,3 @@
-// filepath: /Users/gmoraes/Documents/personal/it/url-shortener/internal/middleware/auth_middleware.go
 package middleware
 
 import (
@@ -7,6 +6,7 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/guttosm/url-shortener/internal/auth"
+    "github.com/guttosm/url-shortener/internal/dto"
 )
 
 // AuthMiddleware validates the JWT token and extracts user information.
@@ -19,16 +19,16 @@ func AuthMiddleware() gin.HandlerFunc {
     return func(c *gin.Context) {
         authHeader := c.GetHeader("Authorization")
         if authHeader == "" {
-            c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
-            c.Abort()
+            _ = c.Error(dto.NewErrorResponse("Authorization header is required", nil)) // Register the error
+            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
             return
         }
 
         tokenString := strings.TrimPrefix(authHeader, "Bearer ")
         claims, err := auth.ValidateToken(tokenString)
         if err != nil {
-            c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
-            c.Abort()
+            c.Error(dto.NewErrorResponse("Invalid or expired token", err)) // Register the error
+            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
             return
         }
 

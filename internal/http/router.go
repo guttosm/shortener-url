@@ -3,9 +3,9 @@ package http
 import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/guttosm/url-shortener/docs"
+	"github.com/guttosm/url-shortener/internal/middleware"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/guttosm/url-shortener/internal/middleware"
 )
 
 // NewRouter sets up the HTTP routes for the application.
@@ -23,21 +23,19 @@ import (
 func NewRouter(handler *Handler) *gin.Engine {
 	router := gin.Default()
 
+	api := router.Group("/api")
+	{
+		api.POST("/login", handler.Login)
+	}
 
-    api := router.Group("/api")
-    {
-        api.POST("/shorten", handler.ShortenURL)
-    }
+	router.GET("/:shortID", handler.Redirect)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-    router.GET("/:shortID", handler.Redirect)
-    router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	protected := router.Group("/api")
+	protected.Use(middleware.AuthMiddleware())
+	{
+		protected.POST("/shorten", handler.ShortenURL)
+	}
 
-    // Protected routes
-    protected := router.Group("/api")
-    protected.Use(middleware.AuthMiddleware())
-    {
-        protected.GET("/protected-resource", handler.ProtectedResource)
-    }
-
-    return router
+	return router
 }

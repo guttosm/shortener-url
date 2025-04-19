@@ -31,5 +31,5 @@ jobs:
           projectBaseDir: .
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_PROJECT_KEY: your-org_your-repo
-          SONAR_ORGANIZATION: your-org
+          SONAR_PROJECT_KEY: guttosm_shortener-url
+          SONAR_ORGANIZATION: guttosm-personal-projects

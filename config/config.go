@@ -54,14 +54,12 @@ func LoadConfig() {
     viper.AutomaticEnv()
     viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-    // Attempt to read the .env file
     if err := viper.ReadInConfig(); err == nil {
         log.Println("File .env loaded")
     } else {
         log.Println(".env not found. Using environment variables")
     }
 
-    // Populate the AppConfig struct
     AppConfig = &Config{
         MongoURI:   viper.GetString("MONGO_URI"),
         MongoDB:    viper.GetString("MONGO_DB"),
@@ -74,7 +72,6 @@ func LoadConfig() {
         },
     }
 
-    // Check for missing required variables
     if AppConfig.MongoURI == "" || AppConfig.ServerPort == "" {
         log.Println("Some variables were not declared! Check file docker-compose.yml or environment variables.")
     }
