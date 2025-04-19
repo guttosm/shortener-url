@@ -20,6 +20,9 @@ import (
 func NewRouter(handler *Handler, validator auth.TokenValidator) *gin.Engine {
 	router := gin.Default()
 
+	router.Use(middleware.RecoveryMiddleware()) // novo
+	router.Use(middleware.ErrorHandler)
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	public := router.Group("/api")

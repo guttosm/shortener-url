@@ -25,3 +25,9 @@ func ErrorHandler(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, errResponse)
     }
 }
+
+func AbortWithError(c *gin.Context, status int, msg string, err error) {
+	errResp := dto.NewErrorResponse(msg, err)
+	c.Error(errResp)
+	c.AbortWithStatusJSON(status, errResp)
+}
