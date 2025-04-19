@@ -18,7 +18,7 @@ COPY . .
 RUN go build -o url-shortener ./cmd/main.go
 
 # Stage 2: Lightweight container
-FROM alpine:latest
+FROM alpine:3.21.3
 
 RUN apk --no-cache add ca-certificates
 
