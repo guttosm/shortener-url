@@ -68,6 +68,6 @@ func main() {
 		log.Fatal("Error on start up application:", err)
 	}
 
-	server := startServer(router.(http.Handler), config.AppConfig.ServerPort)
+	server := startServer(router, config.AppConfig.ServerPort)
 	gracefulShutdown(server, cleanup)
 }
