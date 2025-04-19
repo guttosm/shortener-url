@@ -1,13 +1,13 @@
 package auth
 
 import (
-    "time"
+	"time"
 
-    "github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 // JWTSecret is the secret key used to sign the JWT tokens.
-var JWTSecret = []byte("your-secret-key") // Replace with a secure key
+var JWTSecret = []byte("your-secret-key") // TODO: replace with secure env-based key in production
 
 // GenerateToken generates a JWT token for a given user ID.
 //
@@ -18,38 +18,47 @@ var JWTSecret = []byte("your-secret-key") // Replace with a secure key
 // - string: The signed JWT token.
 // - error: An error if token generation fails.
 func GenerateToken(userID string) (string, error) {
-    claims := jwt.MapClaims{
-        "user_id": userID,
-        "exp":     time.Now().Add(time.Hour * 24).Unix(),
-    }
+	claims := jwt.MapClaims{
+		"user_id": userID,
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+	}
 
-    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-    return token.SignedString(JWTSecret)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(JWTSecret)
 }
 
-// ValidateToken validates a JWT token and extracts the claims.
+// TokenValidator defines the interface for validating JWT tokens.
+type TokenValidator interface {
+	ValidateToken(tokenString string) (map[string]interface{}, error)
+}
+
+// JWTValidator is the concrete implementation of TokenValidator using HMAC signing.
+type JWTValidator struct{}
+
+// ValidateToken validates a JWT token and returns its claims.
 //
 // Parameters:
-// - tokenString (string): The JWT token to validate.
+// - tokenString (string): The JWT token string.
 //
 // Returns:
-// - jwt.MapClaims: The claims extracted from the token.
+// - map[string]interface{}: The claims extracted from the token.
 // - error: An error if validation fails.
-func ValidateToken(tokenString string) (jwt.MapClaims, error) {
-    token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-        if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-            return nil, jwt.ErrSignatureInvalid
-        }
-        return JWTSecret, nil
-    })
+func (j *JWTValidator) ValidateToken(tokenString string) (map[string]interface{}, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Ensure token uses HMAC
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, jwt.ErrSignatureInvalid
+		}
+		return JWTSecret, nil
+	})
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-        return claims, nil
-    }
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims, nil
+	}
 
-    return nil, jwt.ErrSignatureInvalid
+	return nil, jwt.ErrSignatureInvalid
 }
