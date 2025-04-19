@@ -35,27 +35,6 @@ definitions:
 info:
   contact: {}
 paths:
-  /{shortID}:
-    get:
-      description: Redirects the user to the original URL based on the shortened ID.
-      parameters:
-      - description: Shortened URL ID
-        in: path
-        name: shortID
-        required: true
-        type: string
-      produces:
-      - text/plain
-      responses:
-        "302":
-          description: Redirects to the original URL
-        "404":
-          description: URL not found
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
-      summary: Redirect to Original URL
-      tags:
-      - URLs
   /api/login:
     post:
       consumes:

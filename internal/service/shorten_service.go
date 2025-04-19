@@ -26,16 +26,6 @@ type URLService interface {
 	// - error: An error if the operation fails.
 	Shorten(ctx context.Context, originalURL string) (*entity.URL, error)
 
-	// FindByShortID retrieves the original URL associated with a given shortened ID.
-	//
-	// Parameters:
-	// - ctx (context.Context): The context for the operation.
-	// - shortID (string): The shortened ID to search for.
-	//
-	// Returns:
-	// - *entity.URL: The URL entity if found, or nil if no matching record exists.
-	// - error: An error if the operation fails.
-	FindByShortID(ctx context.Context, shortID string) (*entity.URL, error)
 }
 
 type urlService struct {
@@ -103,32 +93,3 @@ func (s *urlService) Shorten(ctx context.Context, originalURL string) (*entity.U
 	return url, nil
 }
 
-// FindByShortID retrieves the original URL associated with a given shortened ID.
-//
-// Parameters:
-// - ctx (context.Context): The context for the operation.
-// - shortID (string): The shortened ID to search for.
-//
-// Behavior:
-// - Checks the cache for the shortened ID. If found, returns it.
-// - Checks the database for the shortened ID. If found, caches it and returns it.
-//
-// Returns:
-// - *entity.URL: The URL entity if found, or nil if no matching record exists.
-// - error: An error if the operation fails.
-func (s *urlService) FindByShortID(ctx context.Context, shortID string) (*entity.URL, error) {
-	url, err := s.cacheRepo.GetByShortID(ctx, shortID)
-	if err == nil && url != nil {
-		return url, nil
-	}
-
-	url, err = s.repo.FindByShortID(ctx, shortID)
-	if err != nil {
-		return nil, err
-	}
-	if url != nil {
-		_ = s.cacheRepo.SetByOriginalURL(ctx, url)
-		_ = s.cacheRepo.SetByShortID(ctx, url)
-	}
-	return url, nil
-}

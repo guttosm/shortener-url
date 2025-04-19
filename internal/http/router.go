@@ -28,7 +28,6 @@ func NewRouter(handler *Handler) *gin.Engine {
 		api.POST("/login", handler.Login)
 	}
 
-	router.GET("/:shortID", handler.Redirect)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	protected := router.Group("/api")

@@ -8,6 +8,7 @@ import (
     "github.com/guttosm/url-shortener/internal/auth"
     "github.com/guttosm/url-shortener/internal/dto"
     "github.com/guttosm/url-shortener/internal/service"
+    "github.com/guttosm/url-shortener/config"
 )
 
 // Handler handles HTTP requests for URL shortening, redirection, and user authentication.
@@ -70,35 +71,6 @@ func (h *Handler) ShortenURL(c *gin.Context) {
     c.JSON(http.StatusOK, resp)
 }
 
-// Redirect handles the redirection of a shortened URL to its original URL.
-//
-// @Summary Redirect to Original URL
-// @Description Redirects the user to the original URL based on the shortened ID.
-// @Tags URLs
-// @Produce plain
-// @Param shortID path string true "Shortened URL ID"
-// @Success 302 "Redirects to the original URL"
-// @Failure 404 {object} dto.ErrorResponse "URL not found"
-// @Router /{shortID} [get]
-//
-// Behavior:
-// - Extracts the short ID from the request parameters.
-// - Calls the URL service to find the original URL associated with the short ID.
-// - Redirects the user to the original URL or returns a 404 error if the short ID is not found.
-func (h *Handler) Redirect(c *gin.Context) {
-    shortID := c.Param("shortID")
-
-    // Call the URL service to find the original URL
-    urlEntity, err := h.urlService.FindByShortID(context.Background(), shortID)
-    if err != nil || urlEntity == nil {
-        c.Error(dto.NewErrorResponse("URL not found", err))
-        return
-    }
-
-    // Redirect to the original URL
-    c.Redirect(http.StatusFound, urlEntity.Original)
-}
-
 // Login handles user login and generates a JWT token.
 //
 // @Summary User Login
@@ -121,14 +93,19 @@ func (h *Handler) Login(c *gin.Context) {
         return
     }
 
+    // Retrieve credentials from the configuration
+    configUsername := config.AppConfig.Auth.Username
+    configPassword := config.AppConfig.Auth.Password
+    configUserID := config.AppConfig.Auth.UserID
+
     // Authenticate the user
-    if req.Username != "admin" || req.Password != "password" {
+    if req.Username != configUsername || req.Password != configPassword {
         c.Error(dto.NewErrorResponse("Invalid credentials", nil))
         return
     }
 
-    // Generate a JWT token
-    token, err := auth.GenerateToken("user-id-123")
+    // Generate a JWT token using the user ID from the configuration
+    token, err := auth.GenerateToken(configUserID)
     if err != nil {
         c.Error(dto.NewErrorResponse("Failed to generate token", err))
         return

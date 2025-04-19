@@ -19,7 +19,7 @@ func AuthMiddleware() gin.HandlerFunc {
     return func(c *gin.Context) {
         authHeader := c.GetHeader("Authorization")
         if authHeader == "" {
-            _ = c.Error(dto.NewErrorResponse("Authorization header is required", nil)) // Register the error
+            _ = c.Error(dto.NewErrorResponse("Authorization header is required", nil))
             c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
             return
         }
@@ -27,12 +27,11 @@ func AuthMiddleware() gin.HandlerFunc {
         tokenString := strings.TrimPrefix(authHeader, "Bearer ")
         claims, err := auth.ValidateToken(tokenString)
         if err != nil {
-            c.Error(dto.NewErrorResponse("Invalid or expired token", err)) // Register the error
+            c.Error(dto.NewErrorResponse("Invalid or expired token", err))
             c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
             return
         }
 
-        // Store user ID in the context
         c.Set("user_id", claims["user_id"])
         c.Next()
     }

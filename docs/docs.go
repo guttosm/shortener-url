@@ -115,38 +115,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/{shortID}": {
-            "get": {
-                "description": "Redirects the user to the original URL based on the shortened ID.",
-                "produces": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "URLs"
-                ],
-                "summary": "Redirect to Original URL",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Shortened URL ID",
-                        "name": "shortID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "302": {
-                        "description": "Redirects to the original URL"
-                    },
-                    "404": {
-                        "description": "URL not found",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
