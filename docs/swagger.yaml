@@ -1,5 +1,23 @@
-basePath: /
 definitions:
+  dto.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  dto.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
   dto.ShortenRequest:
     properties:
       url:
@@ -14,15 +32,66 @@ definitions:
       short_url:
         type: string
     type: object
-host: localhost:8080
 info:
   contact: {}
-  description: |-
-    This is a URL shortener API.
-    It allows you to shorten long URLs and retrieve the original URL using the shortened version.
-  title: Shortener URL - API
-  version: "1.0"
 paths:
+  /{shortID}:
+    get:
+      description: Redirects the user to the original URL based on the shortened ID.
+      parameters:
+      - description: Shortened URL ID
+        in: path
+        name: shortID
+        required: true
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "302":
+          description: Redirects to the original URL
+        "404":
+          description: URL not found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Redirect to Original URL
+      tags:
+      - URLs
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates the user and generates a JWT token.
+      parameters:
+      - description: User credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: JWT token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Invalid credentials
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Failed to generate token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: User Login
+      tags:
+      - Authentication
   /api/shorten:
     post:
       consumes:
@@ -42,6 +111,14 @@ paths:
           description: Response with shorter URL
           schema:
             $ref: '#/definitions/dto.ShortenResponse'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Failed to shorten URL
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Shorten a URL
       tags:
       - URLs
