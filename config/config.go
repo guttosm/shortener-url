@@ -22,7 +22,6 @@ func LoadConfig() {
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-	// Tenta carregar o .env se existir (sem erro se não encontrar)
 	if err := viper.ReadInConfig(); err == nil {
 		log.Println("File .env loaded")
 	} else {
@@ -36,7 +35,6 @@ func LoadConfig() {
 		ServerPort: viper.GetString("SERVER_PORT"),
 	}
 
-	// Verificação opcional para debug
 	if AppConfig.MongoURI == "" || AppConfig.ServerPort == "" {
 		log.Println("Some variables was not declared! Check file docker-compose.yml")
 	}

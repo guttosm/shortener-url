@@ -5,32 +5,41 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/guttosm/url-shortener/internal/dto"
 	"github.com/guttosm/url-shortener/internal/service"
 )
 
+// Handler handles HTTP requests for URL shortening and redirection.
+//
+// Fields:
+// - urlService (service.URLService): The service responsible for URL-related operations.
 type Handler struct {
 	urlService service.URLService
 }
 
+// NewHandler creates a new instance of Handler.
+//
+// Parameters:
+// - s (service.URLService): The URL service to be used by the handler.
+//
+// Returns:
+// - *Handler: A new Handler instance.
 func NewHandler(s service.URLService) *Handler {
 	return &Handler{urlService: s}
 }
 
-type shortenRequest struct {
-	URL string `json:"url" binding:"required,url"`
-}
-
-// ShortenURL encurta uma URL.
-// @Summary Encurtar URL
-// @Description Recebe uma URL longa e retorna uma versão encurtada.
+// ShortenURL handles the shortening of a URL.
+//
+// @Summary Shorten a URL
+// @Description Receives a long URL and returns a shortened version.
 // @Tags URLs
 // @Accept json
 // @Produce json
-// @Param url body entity.URL true "URL para encurtar"
-// @Success 200 {object} map[string]string "Response with shorter URL"
+// @Param url body dto.ShortenRequest true "URL" example({"url": "https://www.someurl.com"})
+// @Success 200 {object} dto.ShortenResponse "Response with shorter URL"
 // @Router /api/shorten [post]
 func (h *Handler) ShortenURL(c *gin.Context) {
-	var req shortenRequest
+	var req dto.ShortenRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid URL"})
@@ -43,12 +52,18 @@ func (h *Handler) ShortenURL(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"short_id":  urlEntity.ShortID,
-		"short_url": c.Request.Host + "/" + urlEntity.ShortID,
-	})
+	resp := dto.ShortenResponse{
+		ShortID:  urlEntity.ShortID,
+		ShortURL: c.Request.Host + "/" + urlEntity.ShortID,
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
+// Redirect handles the redirection of a shortened URL to its original URL.
+//
+// Parameters:
+// - c (*gin.Context): The Gin context containing the HTTP request and response.
 func (h *Handler) Redirect(c *gin.Context) {
 	shortID := c.Param("shortID")
 

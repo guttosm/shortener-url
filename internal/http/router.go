@@ -7,6 +7,18 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// NewRouter sets up the HTTP routes for the application.
+//
+// Parameters:
+// - handler (*Handler): The HTTP handler containing the logic for URL shortening and redirection.
+//
+// Returns:
+// - *gin.Engine: The configured Gin router with all the necessary routes.
+//
+// Routes:
+// - POST /api/shorten: Handles URL shortening requests.
+// - GET /:shortID: Redirects to the original URL based on the shortened ID.
+// - GET /swagger/*any: Serves the Swagger API documentation.
 func NewRouter(handler *Handler) *gin.Engine {
 	router := gin.Default()
 

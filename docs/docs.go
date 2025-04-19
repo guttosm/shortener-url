@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/api/shorten": {
             "post": {
-                "description": "Recebe uma URL longa e retorna uma versão encurtada.",
+                "description": "Receives a long URL and returns a shortened version.",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,15 +27,15 @@ const docTemplate = `{
                 "tags": [
                     "URLs"
                 ],
-                "summary": "Encurtar URL",
+                "summary": "Shorten a URL",
                 "parameters": [
                     {
-                        "description": "URL para encurtar",
+                        "description": "URL",
                         "name": "url",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/entity.URL"
+                            "$ref": "#/definitions/dto.ShortenRequest"
                         }
                     }
                 ],
@@ -43,10 +43,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Response with shorter URL",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/dto.ShortenResponse"
                         }
                     }
                 }
@@ -54,19 +51,24 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "entity.URL": {
+        "dto.ShortenRequest": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ShortenResponse": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "short_id": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
-                "original": {
-                    "type": "string"
-                },
-                "shortID": {
+                "short_url": {
                     "type": "string"
                 }
             }
@@ -76,12 +78,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Version:          "1.0",
+	Host:             "localhost:8080",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Shortener URL - API",
+	Description:      "This is a URL shortener API.\nIt allows you to shorten long URLs and retrieve the original URL using the shortened version.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -1,40 +1,48 @@
+basePath: /
 definitions:
-  entity.URL:
+  dto.ShortenRequest:
     properties:
-      createdAt:
+      url:
         type: string
-      id:
+    required:
+    - url
+    type: object
+  dto.ShortenResponse:
+    properties:
+      short_id:
         type: string
-      original:
-        type: string
-      shortID:
+      short_url:
         type: string
     type: object
+host: localhost:8080
 info:
   contact: {}
+  description: |-
+    This is a URL shortener API.
+    It allows you to shorten long URLs and retrieve the original URL using the shortened version.
+  title: Shortener URL - API
+  version: "1.0"
 paths:
   /api/shorten:
     post:
       consumes:
       - application/json
-      description: Recebe uma URL longa e retorna uma versão encurtada.
+      description: Receives a long URL and returns a shortened version.
       parameters:
-      - description: URL para encurtar
+      - description: URL
         in: body
         name: url
         required: true
         schema:
-          $ref: '#/definitions/entity.URL'
+          $ref: '#/definitions/dto.ShortenRequest'
       produces:
       - application/json
       responses:
         "200":
           description: Response with shorter URL
           schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Encurtar URL
+            $ref: '#/definitions/dto.ShortenResponse'
+      summary: Shorten a URL
       tags:
       - URLs
 swagger: "2.0"

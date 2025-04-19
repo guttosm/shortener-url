@@ -9,6 +9,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// ConnectMongo establishes a connection to a MongoDB database and returns the client and database instances.
+//
+// Parameters:
+// - uri (string): The connection URI for the MongoDB server.
+// - dbName (string): The name of the database to connect to.
+//
+// Returns:
+// - *mongo.Client: The MongoDB client instance.
+// - *mongo.Database: The MongoDB database instance.
+// - error: An error if the connection or ping to the database fails.
 func ConnectMongo(uri, dbName string) (*mongo.Client, *mongo.Database, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

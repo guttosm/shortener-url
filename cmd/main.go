@@ -1,9 +1,9 @@
-// @title Encurtador de URL - API
+// @title Shortener URL - API
 // @version 1.0
-// @description Esta é a API para encurtar e redirecionar URLs
+// @description This is a URL shortener API.
+// @description It allows you to shorten long URLs and retrieve the original URL using the shortened version.
 // @host localhost:8080
 // @BasePath /
-
 package main
 
 import (
