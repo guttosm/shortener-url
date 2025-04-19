@@ -20,16 +20,13 @@ import (
 func NewRouter(handler *Handler, validator auth.TokenValidator) *gin.Engine {
 	router := gin.Default()
 
-	// Swagger documentation
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// Public routes
 	public := router.Group("/api")
 	{
 		public.POST("/login", handler.Login)
 	}
 
-	// Protected routes
 	protected := router.Group("/api")
 	protected.Use(middleware.AuthMiddleware(validator))
 	{

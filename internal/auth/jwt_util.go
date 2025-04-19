@@ -2,6 +2,7 @@ package auth
 
 import (
 	"time"
+	"errors"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -9,6 +10,8 @@ import (
 // JWTSecret is the secret key used to sign the JWT tokens.
 var JWTSecret = []byte("your-secret-key") // TODO: replace with secure env-based key in production
 
+
+var ErrInvalidToken = errors.New("invalid or expired token")
 // GenerateToken generates a JWT token for a given user ID.
 //
 // Parameters:

@@ -16,7 +16,8 @@ import (
 // Fields:
 // - urlService (service.URLService): The service responsible for URL-related operations.
 type Handler struct {
-    urlService service.URLService
+	urlService service.URLService
+	authConfig config.AuthConfig
 }
 
 // NewHandler creates a new instance of Handler.
@@ -26,8 +27,11 @@ type Handler struct {
 //
 // Returns:
 // - *Handler: A new Handler instance.
-func NewHandler(s service.URLService) *Handler {
-    return &Handler{urlService: s}
+func NewHandler(s service.URLService, authCfg config.AuthConfig) *Handler {
+	return &Handler{
+		urlService: s,
+		authConfig: authCfg,
+	}
 }
 
 // ShortenURL handles the shortening of a URL.
@@ -85,32 +89,23 @@ func (h *Handler) ShortenURL(c *gin.Context) {
 // @Failure 500 {object} dto.ErrorResponse "Failed to generate token"
 // @Router /api/login [post]
 func (h *Handler) Login(c *gin.Context) {
-    var req dto.LoginRequest
+	var req dto.LoginRequest
 
-    // Validate the request body
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.Error(dto.NewErrorResponse("Invalid request", err))
-        return
-    }
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.Error(dto.NewErrorResponse("Invalid request", err))
+		return
+	}
 
-    // Retrieve credentials from the configuration
-    configUsername := config.AppConfig.Auth.Username
-    configPassword := config.AppConfig.Auth.Password
-    configUserID := config.AppConfig.Auth.UserID
+	if req.Username != h.authConfig.Username || req.Password != h.authConfig.Password {
+		c.Error(dto.NewErrorResponse("Invalid credentials", nil))
+		return
+	}
 
-    // Authenticate the user
-    if req.Username != configUsername || req.Password != configPassword {
-        c.Error(dto.NewErrorResponse("Invalid credentials", nil))
-        return
-    }
+	token, err := auth.GenerateToken(h.authConfig.UserID)
+	if err != nil {
+		c.Error(dto.NewErrorResponse("Failed to generate token", err))
+		return
+	}
 
-    // Generate a JWT token using the user ID from the configuration
-    token, err := auth.GenerateToken(configUserID)
-    if err != nil {
-        c.Error(dto.NewErrorResponse("Failed to generate token", err))
-        return
-    }
-
-    // Return the token in the response
-    c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
