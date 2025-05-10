@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"syscall"
 	"testing"
@@ -16,7 +17,12 @@ func TestStartServer(t *testing.T) {
 	})
 
 	server := startServer(router, "8081")
-	defer server.Shutdown(context.Background())
+	defer func(server *http.Server, ctx context.Context) {
+		err := server.Shutdown(ctx)
+		if err != nil {
+			t.Fatalf("Failed to shutdown server: %v", err)
+		}
+	}(server, context.Background())
 
 	// Give the server some time to start
 	time.Sleep(100 * time.Millisecond)
@@ -26,7 +32,12 @@ func TestStartServer(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to send request: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			t.Fatalf("Failed to close response body: %v", err)
+		}
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		t.Errorf("Expected status code 200, got %d", resp.StatusCode)
@@ -46,7 +57,10 @@ func TestGracefulShutdown(t *testing.T) {
 	go func() {
 		time.Sleep(100 * time.Millisecond)
 		// Simulate sending a shutdown signal
-		syscall.Kill(syscall.Getpid(), syscall.SIGTERM)
+		err := syscall.Kill(syscall.Getpid(), syscall.SIGTERM)
+		if err != nil {
+			return
+		}
 	}()
 
 	gracefulShutdown(server, cleanup)

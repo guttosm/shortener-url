@@ -23,7 +23,12 @@ func TestConnectMongoWithTestContainer(t *testing.T) {
 		Started:          true,
 	})
 	assert.NoError(t, err, "Failed to start MongoDB container")
-	defer mongoC.Terminate(ctx)
+	defer func(mongoC testcontainers.Container, ctx context.Context, opts ...testcontainers.TerminateOption) {
+		err := mongoC.Terminate(ctx, opts...)
+		if err != nil {
+
+		}
+	}(mongoC, ctx)
 
 	// Get the container's host and port
 	host, err := mongoC.Host(ctx)

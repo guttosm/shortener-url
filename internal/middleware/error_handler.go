@@ -1,12 +1,11 @@
 package middleware
 
 import (
-    "net/http"
+	"net/http"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 	"github.com/guttosm/url-shortener/internal/dto"
 )
-
 
 // ErrorHandler is a middleware that handles errors and formats the response.
 //
@@ -18,16 +17,15 @@ import (
 // Parameters:
 // - c (*gin.Context): The Gin context containing the HTTP request and response.
 func ErrorHandler(c *gin.Context) {
-    c.Next()
-    if len(c.Errors) > 0 {
-        errResponse := dto.NewErrorResponse("An error occurred", c.Errors[0].Err)
+	c.Next()
+	if len(c.Errors) > 0 {
+		errResponse := dto.NewErrorResponse("An error occurred", c.Errors[0].Err)
 
-        c.JSON(http.StatusInternalServerError, errResponse)
-    }
+		c.JSON(http.StatusInternalServerError, errResponse)
+	}
 }
 
 func AbortWithError(c *gin.Context, status int, msg string, err error) {
 	errResp := dto.NewErrorResponse(msg, err)
-	c.Error(errResp)
 	c.AbortWithStatusJSON(status, errResp)
 }

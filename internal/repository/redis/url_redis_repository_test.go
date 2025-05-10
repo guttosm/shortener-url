@@ -1,4 +1,3 @@
-
 package redis_test
 
 import (
@@ -58,7 +57,7 @@ func TestURLRedisRepository(t *testing.T) {
 	client, teardown := setupRedis(t)
 	defer teardown()
 
-	repo := repo.NewURLRedisRepository(client)
+	repository := repo.NewURLRedisRepository(client)
 	ctx := context.Background()
 
 	url := &entity.URL{
@@ -68,18 +67,18 @@ func TestURLRedisRepository(t *testing.T) {
 	}
 
 	// Set and Get by Original URL
-	err := repo.SetByOriginalURL(ctx, url)
+	err := repository.SetByOriginalURL(ctx, url)
 	assert.NoError(t, err)
 
-	result, err := repo.GetByOriginalURL(ctx, url.Original)
+	result, err := repository.GetByOriginalURL(ctx, url.Original)
 	assert.NoError(t, err)
 	assert.Equal(t, url.ShortID, result.ShortID)
 
 	// Set and Get by ShortID
-	err = repo.SetByShortID(ctx, url)
+	err = repository.SetByShortID(ctx, url)
 	assert.NoError(t, err)
 
-	result, err = repo.GetByShortID(ctx, url.ShortID)
+	result, err = repository.GetByShortID(ctx, url.ShortID)
 	assert.NoError(t, err)
 	assert.Equal(t, url.Original, result.Original)
 }

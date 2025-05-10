@@ -37,11 +37,11 @@ func NewURLRedisRepository(client *redis.Client) repository.URLCacheRepository {
 //
 // Behavior:
 // - Constructs a Redis key using the original URL.
-// - Retrieves the cached URL entity from Redis and unmarshals it into an entity.URL object.
+// - Retrieves the cached URL entity from Redis and unmarshal it into an entity.URL object.
 //
 // Returns:
 // - *entity.URL: The URL entity if found, or nil if no matching key exists.
-// - error: An error if the retrieval or unmarshaling fails.
+// - error: An error if the retrieval or unmarshalling fails.
 func (r *urlRedisRepository) GetByOriginalURL(ctx context.Context, originalURL string) (*entity.URL, error) {
 	key := "url:original:" + originalURL
 	val, err := r.client.Get(ctx, key).Result()
@@ -82,11 +82,11 @@ func (r *urlRedisRepository) SetByOriginalURL(ctx context.Context, url *entity.U
 //
 // Behavior:
 // - Constructs a Redis key using the shortened ID.
-// - Retrieves the cached URL entity from Redis and unmarshals it into an entity.URL object.
+// - Retrieves the cached URL entity from Redis and unmarshal it into an entity.URL object.
 //
 // Returns:
 // - *entity.URL: The URL entity if found, or nil if no matching key exists.
-// - error: An error if the retrieval or unmarshaling fails.
+// - error: An error if the retrieval or unmarshalling fails.
 func (r *urlRedisRepository) GetByShortID(ctx context.Context, shortID string) (*entity.URL, error) {
 	key := "url:short_id:" + shortID
 	val, err := r.client.Get(ctx, key).Result()

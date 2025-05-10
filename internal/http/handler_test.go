@@ -10,10 +10,10 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	apphttp "github.com/guttosm/url-shortener/internal/http"
 	"github.com/guttosm/url-shortener/config"
 	"github.com/guttosm/url-shortener/internal/dto"
 	"github.com/guttosm/url-shortener/internal/entity"
+	apphttp "github.com/guttosm/url-shortener/internal/http"
 	"github.com/stretchr/testify/assert"
 )
 

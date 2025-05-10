@@ -1,12 +1,12 @@
 package app
 
 import (
+	"github.com/guttosm/url-shortener/internal/repository"
 	mongoRepo "github.com/guttosm/url-shortener/internal/repository/mongo"
 	redisRepo "github.com/guttosm/url-shortener/internal/repository/redis"
 	"github.com/guttosm/url-shortener/internal/service"
 	"github.com/redis/go-redis/v9"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
-	"github.com/guttosm/url-shortener/internal/repository"
 )
 
 type URLModule struct {

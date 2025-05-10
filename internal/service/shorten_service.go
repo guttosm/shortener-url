@@ -25,7 +25,6 @@ type URLService interface {
 	// - *entity.URL: The shortened URL entity.
 	// - error: An error if the operation fails.
 	Shorten(ctx context.Context, originalURL string) (*entity.URL, error)
-
 }
 
 type urlService struct {
@@ -92,4 +91,3 @@ func (s *urlService) Shorten(ctx context.Context, originalURL string) (*entity.U
 
 	return url, nil
 }
-

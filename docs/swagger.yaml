@@ -15,15 +15,15 @@ definitions:
       username:
         type: string
     required:
-    - password
-    - username
+      - password
+      - username
     type: object
   dto.ShortenRequest:
     properties:
       url:
         type: string
     required:
-    - url
+      - url
     type: object
   dto.ShortenResponse:
     properties:
@@ -33,22 +33,22 @@ definitions:
         type: string
     type: object
 info:
-  contact: {}
+  contact: { }
 paths:
   /api/login:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Authenticates the user and generates a JWT token.
       parameters:
-      - description: User credentials
-        in: body
-        name: credentials
-        required: true
-        schema:
-          $ref: '#/definitions/dto.LoginRequest'
+        - description: User credentials
+          in: body
+          name: credentials
+          required: true
+          schema:
+            $ref: '#/definitions/dto.LoginRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: JWT token
@@ -70,21 +70,21 @@ paths:
             $ref: '#/definitions/dto.ErrorResponse'
       summary: User Login
       tags:
-      - Authentication
+        - Authentication
   /api/shorten:
     post:
       consumes:
-      - application/json
+        - application/json
       description: Receives a long URL and returns a shortened version.
       parameters:
-      - description: URL
-        in: body
-        name: url
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ShortenRequest'
+        - description: URL
+          in: body
+          name: url
+          required: true
+          schema:
+            $ref: '#/definitions/dto.ShortenRequest'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: Response with shorter URL
@@ -100,5 +100,5 @@ paths:
             $ref: '#/definitions/dto.ErrorResponse'
       summary: Shorten a URL
       tags:
-      - URLs
+        - URLs
 swagger: "2.0"

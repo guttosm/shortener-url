@@ -8,10 +8,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	apphttp "github.com/guttosm/url-shortener/internal/http"
-	"github.com/guttosm/url-shortener/internal/auth"
 	"github.com/guttosm/url-shortener/config"
+	"github.com/guttosm/url-shortener/internal/auth"
 	"github.com/guttosm/url-shortener/internal/entity"
+	apphttp "github.com/guttosm/url-shortener/internal/http"
 	"github.com/stretchr/testify/assert"
 )
 

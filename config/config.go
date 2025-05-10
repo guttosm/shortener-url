@@ -1,10 +1,10 @@
 package config
 
 import (
-    "log"
-    "strings"
+	"log"
+	"strings"
 
-    "github.com/spf13/viper"
+	"github.com/spf13/viper"
 )
 
 // Config holds the application configuration.
@@ -16,11 +16,11 @@ import (
 // - ServerPort (string): The port on which the server will run.
 // - Auth (AuthConfig): The authentication configuration.
 type Config struct {
-    MongoURI   string
-    MongoDB    string
-    RedisURI   string
-    ServerPort string
-    Auth       AuthConfig
+	MongoURI   string
+	MongoDB    string
+	RedisURI   string
+	ServerPort string
+	Auth       AuthConfig
 }
 
 // AuthConfig holds the authentication configuration.
@@ -30,9 +30,9 @@ type Config struct {
 // - Username (string): The username for authentication.
 // - Password (string): The password for authentication.
 type AuthConfig struct {
-    UserID   string
-    Username string
-    Password string
+	UserID   string
+	Username string
+	Password string
 }
 
 // AppConfig is the global instance of the application configuration.
@@ -49,30 +49,30 @@ var AppConfig *Config
 // - Logs whether the .env file was loaded or if environment variables are being used.
 // - Logs a warning if required variables are missing.
 func LoadConfig() {
-    viper.SetConfigFile(".env")
-    viper.SetConfigType("env")
-    viper.AutomaticEnv()
-    viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.SetConfigFile(".env")
+	viper.SetConfigType("env")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
-    if err := viper.ReadInConfig(); err == nil {
-        log.Println("File .env loaded")
-    } else {
-        log.Println(".env not found. Using environment variables")
-    }
+	if err := viper.ReadInConfig(); err == nil {
+		log.Println("File .env loaded")
+	} else {
+		log.Println(".env not found. Using environment variables")
+	}
 
-    AppConfig = &Config{
-        MongoURI:   viper.GetString("MONGO_URI"),
-        MongoDB:    viper.GetString("MONGO_DB"),
-        RedisURI:   viper.GetString("REDIS_URI"),
-        ServerPort: viper.GetString("SERVER_PORT"),
-        Auth: AuthConfig{
-            UserID:   viper.GetString("AUTH_USER_ID"),
-            Username: viper.GetString("AUTH_USERNAME"),
-            Password: viper.GetString("AUTH_PASSWORD"),
-        },
-    }
+	AppConfig = &Config{
+		MongoURI:   viper.GetString("MONGO_URI"),
+		MongoDB:    viper.GetString("MONGO_DB"),
+		RedisURI:   viper.GetString("REDIS_URI"),
+		ServerPort: viper.GetString("SERVER_PORT"),
+		Auth: AuthConfig{
+			UserID:   viper.GetString("AUTH_USER_ID"),
+			Username: viper.GetString("AUTH_USERNAME"),
+			Password: viper.GetString("AUTH_PASSWORD"),
+		},
+	}
 
-    if AppConfig.MongoURI == "" || AppConfig.ServerPort == "" {
-        log.Println("Some variables were not declared! Check file docker-compose.yml or environment variables.")
-    }
+	if AppConfig.MongoURI == "" || AppConfig.ServerPort == "" {
+		log.Println("Some variables were not declared! Check file docker-compose.yml or environment variables.")
+	}
 }

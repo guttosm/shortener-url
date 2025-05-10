@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/guttosm/url-shortener/internal/entity"
@@ -62,7 +63,7 @@ func (r *urlMongoRepository) FindByOriginalURL(ctx context.Context, originalURL 
 	var url entity.URL
 	err := r.collection.FindOne(ctx, bson.M{"original": originalURL}).Decode(&url)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
@@ -83,7 +84,7 @@ func (r *urlMongoRepository) FindByShortID(ctx context.Context, shortID string) 
 	var url entity.URL
 	err := r.collection.FindOne(ctx, bson.M{"short_id": shortID}).Decode(&url)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
